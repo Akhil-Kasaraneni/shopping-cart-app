@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import SingleProduct from './SingleProduct'
-
+import { Grid } from '@material-ui/core';
+import Cart from './Cart';
+import styled from "styled-components";
 export class ProductsList extends Component {
 
     state = {
@@ -47,13 +49,78 @@ export class ProductsList extends Component {
             }
         ]
     }
+
+    add = (id)=>{
+        const list = [...this.state.products]
+        let index = list.findIndex((product)=>{
+            return product.id===id;
+        } )
+        list[index].quantity = list[index].quantity+1;
+        this.setState({
+            products : list
+        })
+    }
+
+    sub = (id)=>{ 
+        const list = [...this.state.products]
+        let index = list.findIndex((product)=>{
+            return product.id===id;
+        } )
+        if(list[index].quantity!==0){
+            list[index].quantity = list[index].quantity-1;
+            this.setState({
+                products : list
+            })
+        }
+    }
+
+    remove = (id)=>{
+        const list = [...this.state.products]
+        let index = list.findIndex((l)=>{
+            return l.id === id;
+        })
+        list[index].quantity=0;
+        this.setState({
+            products : list
+        })
+    }
     render() {
         const List = this.state.products.map((product)=>{
-            return  <SingleProduct name={product.name} price={product.price} info={product.info} quantity={product.quantity} img={product.img} />
+            return  <SingleProduct name={product.name} price={product.price} info={product.info} quantity={product.quantity} img={product.img} add={this.add} sub={this.sub} id={product.id} key={product.id}/>
         })
+
+        const StyledDiv =styled.div`
+            border : 2px solid pink;
+            margin : 2px;
+        `;
+
+        const cartList = this.state.products.filter( (product)=>{
+            return product.quantity!==0
+        })
+
+        const CardProductList = cartList.map((product)=>{
+            return <Cart name={product.name} price={product.price} quantity={product.quantity} remove={this.remove} key={product.id} id={product.id}/>
+        } )
+
+        let TotalCost = 0;
+        for(var i=0;i<cartList.length;i++){
+            TotalCost+=cartList[i].price * cartList[i].quantity; 
+        }
         return (
             <div>
-                {List}
+                <Grid container>
+                    <Grid item xs={12} sm={8}>
+                        <StyledDiv>
+                            <h1>Products List</h1>
+                            {List}
+                        </StyledDiv>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <h1>Cart</h1>
+                        {CardProductList}
+                        <p>Total Cost is : {TotalCost}</p>
+                    </Grid>
+                </Grid>
             </div>
         )
     }

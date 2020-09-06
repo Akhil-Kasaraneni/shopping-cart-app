@@ -33,9 +33,9 @@ const SingleProduct =(props)=>{
                     <h1>{props.name}</h1>
                     <p> {props.info}</p>
                     <p> price is : {props.price}</p>
-                    <StyledButton>-</StyledButton>
+                    <StyledButton onClick={()=>{ props.sub(props.id)}}>-</StyledButton>
                     <span>Quantity is {props.quantity} </span>
-                    <StyledButton>+</StyledButton>
+                    <StyledButton onClick={()=>props.add(props.id)}>+</StyledButton>
                 </Grid>
             </Grid>
         </div>
